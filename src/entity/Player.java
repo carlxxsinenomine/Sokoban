@@ -13,20 +13,19 @@ public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyHandler;
 
-
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
 
+        //Collision shape for Player
         setDefaultValues();
         getPlayerImage();
     }
 
     public void setDefaultValues() {
-        worldX = gamePanel.tileSize * 10;
+        worldX = gamePanel.tileSize * 2;
         worldY = gamePanel.tileSize * 10;
         // set default direction
-
         speed = 32;
         direction = "right";
     }
@@ -61,12 +60,36 @@ public class Player extends Entity {
             else
                 direction = "right";
 
-            switch (direction) {
-                case "up" -> worldY -= speed;
-                case "down" -> worldY += speed;
-                case "left" -> worldX -= speed;
-                case "right" -> worldX += speed;
+            collisionOn = false;
+            gamePanel.oChecker.checkTile(this);
+            gamePanel.oChecker.boxToWall(this);
+            gamePanel.oChecker.boxToBox(this);
+            int objIndex = gamePanel.oChecker.checkObject(this);
+
+            // todo: optimize latur yeahhhhhh
+            if (!collisionOn)
+                switch (direction) {
+                    case "up" -> worldY -= speed;
+                    case "down" -> worldY += speed;
+                    case "left" -> worldX -= speed;
+                    case "right" -> worldX += speed;
+                }
+
+            if (objIndex > gamePanel.BSObject.length) {
+                collisionOn = false;
+                return;
             }
+
+            if (collisionOn && gamePanel.BSObject[objIndex].isMovable && !gamePanel.BSObject[objIndex].collisionOn) {
+                gamePanel.BSObject[objIndex].update(gamePanel);
+                switch (direction) {
+                    case "up" -> worldY -= speed;
+                    case "down" -> worldY += speed;
+                    case "left" -> worldX -= speed;
+                    case "right" -> worldX += speed;
+                }
+            }
+            gamePanel.BSObject[objIndex].collisionOn = false;
         }
 
         // To check which sprite to show
@@ -120,17 +143,15 @@ public class Player extends Entity {
                 else
                     image = r4;
             else
-            if (spriteNum == 1)
-                image = l1;
-            else if (spriteNum == 2)
-                image = l2;
-            else if (spriteNum == 3)
-                image = l3;
-            else
-                image = l4;
-
+                if (spriteNum == 1)
+                    image = l1;
+                else if (spriteNum == 2)
+                    image = l2;
+                else if (spriteNum == 3)
+                    image = l3;
+                else
+                    image = l4;
         }
-//        System.out.println(direction);
         g2.drawImage(image, worldX, worldY, gamePanel.tileSize, gamePanel.tileSize, null);
     }
 }
