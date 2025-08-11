@@ -2,16 +2,21 @@ package level;
 
 import main.GamePanel;
 import main.MouseHandler;
+import tile.TileManager;
 
 public class LevelManager {
     public Level[] levels;
     GamePanel gamePanel;
     MouseHandler mouseHandler;
+    TileManager tileManager;
     int levelCount = 1;
 
-    public LevelManager(GamePanel gamePanel, MouseHandler mouseHandler) {
+
+
+    public LevelManager(GamePanel gamePanel, MouseHandler mouseHandler, TileManager tileManager) {
         this.gamePanel = gamePanel;
         this.mouseHandler = mouseHandler;
+        this.tileManager = tileManager;
         levels = new Level[45]; // Ayusin nalng latur para hinde naka hardcode ang max levels; Read from file.
         loadLevels();
     }
@@ -33,18 +38,22 @@ public class LevelManager {
         }
     }
 
-    public Level mouseCursorOnTile() {
+    // So here's what im thinking, im considering renaming this method chooseLevel() then call the loadMap() from the
+    // TileManager class
+    public void onSelectLevel() {
         for (Level level: levels) {
             // Check if the mouse's coordinates are on  the same coordinates of level tiles
             if (mouseHandler.mouseY >= level.yPos &&
                 mouseHandler.mouseY <= level.yPos + level.height &&
                 mouseHandler.mouseX >= level.xPos &&
                 mouseHandler.mouseX <= level.xPos + level.width) {
-                // Debug this shit
-//                System.out.println(level.levelNumber);
-                return level; // I-return the current level;
+                System.out.println(level.levelString);
+//                mouseHandler.mouseX = mouseHandler.mouseY = 0;
+                gamePanel.levelState = false;
+                gamePanel.gameState = true;
+
+                tileManager.loadMap("/maps/" + level.levelString + ".txt");
             }
         }
-        return null;
     }
 }

@@ -10,6 +10,7 @@ public class Level {
     BufferedImage image;
     public Font gemuno;
     public int levelNumber = 0;
+    public int bestMove;
     public String levelString;
     public boolean isCompleted = false;
     public int xPos, yPos, txtX, txtY;

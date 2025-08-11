@@ -47,6 +47,10 @@ public class Player extends Entity {
 
     // Update player state
     public void update() {
+        // Para sa scoreboard
+        gamePanel.scoreBoard.prevX = worldX;
+        gamePanel.scoreBoard.prevY = worldY;
+
         // Check if any keys are pressed
         if (keyHandler.upPressed || keyHandler.downPressed ||
                 keyHandler.leftPressed || keyHandler.rightPressed) {
@@ -90,6 +94,9 @@ public class Player extends Entity {
                 }
             }
             gamePanel.BSObject[objIndex].collisionOn = false;
+        }
+        if (keyHandler.escPressed) {
+            // show mainmenu
         }
 
         // To check which sprite to show

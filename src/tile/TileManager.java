@@ -1,5 +1,6 @@
 package tile;
 
+import level.LevelManager;
 import main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 public class TileManager {
     GamePanel gamePanel;
+    LevelManager levelManager;
     public Tile[] tile;
     public int[][] mapTileNum;
 
@@ -19,7 +21,6 @@ public class TileManager {
         tile = new Tile[100];
         mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldRow];
         getTileImage();
-        loadMap("/maps/test.txt");
     }
 
     public void getTileImage() {
