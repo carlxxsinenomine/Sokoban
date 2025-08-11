@@ -14,7 +14,7 @@ public class UI {
     BufferedImage image, button1, button2, button3;
     GamePanel gamePanel;
     Graphics2D g2;
-    Button playButton, levelsButton, backButton;
+    Button playButton = null, levelsButton = null, backButton = null;
 
     int xPos, yPos, buttonX, playButtonY, levelsButtonY;
     public UI(GamePanel gamePanel) {
@@ -44,10 +44,7 @@ public class UI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Optimize later  and figure out where to put these; I'm considering on the draw method, but it's consistently gets called, so I think it's a bad idea
-        playButton = new Button("play", button1, 200, 50, buttonX, playButtonY);
-        levelsButton = new Button("levels", button2, 200, 50, buttonX, levelsButtonY);
-        backButton = new Button("back", button3, 60, 40, 40, 10);//Change later don't hardcode para maging relative nalng posiiton instead na fixed.
+
     }
 
     public void draw(Graphics2D g2) {
@@ -55,10 +52,29 @@ public class UI {
 
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        if (gamePanel.mainState)
+        playButton = new Button("play", button1, 200, 50, buttonX, playButtonY);
+        levelsButton = new Button("levels", button2, 200, 50, buttonX, levelsButtonY);
+        backButton = new Button("back", button3, 60, 40, 40, 10);//Change later don't hardcode para maging relative nalng posiiton instead na fixed.
+
+        if (gamePanel.mainState) {
+            // I don't know where to put this, should I put it here or in the UI class.....
+            if (levelsButton.mouseOnButton(gamePanel.mouseHandler) && gamePanel.mainState) {
+                gamePanel.levelState = true;
+                gamePanel.mainState = false;
+            }
+
+            if (playButton.mouseOnButton(gamePanel.mouseHandler) && gamePanel.mainState) {
+                gamePanel.mainState = false;
+                gamePanel.gameState = true;
+            }
             drawMainScreen();
+        }
         else if (gamePanel.levelState) {
-            Level level = gamePanel.levelManager.mouseCursorOnTile(); // Once player picked a level then load the map; add loadLevelMap method sa LevelManager.
+
+            if (backButton.mouseOnButton(gamePanel.mouseHandler) && gamePanel.levelState) {
+                gamePanel.levelState = false;
+                gamePanel.mainState = true;
+            }
             drawLevelsScreen();
         }
     }
@@ -69,7 +85,7 @@ public class UI {
         g2.setFont(luckiest_guy.deriveFont(Font.BOLD, 60F));
 
         String titleText = "Project Sokoban";
-        xPos = getXOfText(titleText) ;
+        xPos = getXOfText(titleText);
         yPos= gamePanel.tileSize*5;
 
         g2.setColor(Color.DARK_GRAY);
@@ -94,6 +110,8 @@ public class UI {
         g2.setColor(Color.DARK_GRAY);
         g2.drawString(levelString, xPos, yPos);
     }
+
+
 
     public void drawLevelsScreen() {
         drawBackground();
@@ -139,4 +157,5 @@ public class UI {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return gamePanel.screenWidth / 2 - length / 2;
     }
+
 }

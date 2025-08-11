@@ -19,8 +19,12 @@ public class Button extends SuperButton {
                 mouseHandler.mouseY <= buttonY + height &&
                 mouseHandler.mouseX >= buttonX &&
                 mouseHandler.mouseX <= buttonX + width) {
+
+            mouseHandler.mouseX = mouseHandler.mouseY = 0; // Reset kasi potek nareread parin after pressing Levels button then na auto pindot ung level
+
             return true;
         }
+
         return false;
     }
 }

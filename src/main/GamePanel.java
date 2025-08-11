@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import level.Level;
 import level.LevelManager;
 import object.OBJ_Box;
 import object.OBJ_Orb;
@@ -9,6 +10,7 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Clock;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 32; // The tiles and sprites are all 32x32px by default
@@ -35,20 +37,21 @@ public class GamePanel extends JPanel implements Runnable {
     KeyHandler keyHandler = new KeyHandler();
     MouseHandler mouseHandler = new MouseHandler();
     public UI ui = new UI(this);
-    public LevelManager levelManager = new LevelManager(this, mouseHandler);
     TileManager tileManager = new TileManager(this);
+    public LevelManager levelManager = new LevelManager(this, mouseHandler, tileManager);
     Thread gameThread;
     public CollisionChecker oChecker = new CollisionChecker(this);
     public AssetSetter assetSetter = new AssetSetter(this);
     public Player player = new Player(this, keyHandler);
-    public ScoreBoard scoreBoard = new ScoreBoard(player, keyHandler);
+    public ScoreBoard scoreBoard = new ScoreBoard(player, keyHandler, levelManager, this);
+
 
     // For Boxes Objects
     public OBJ_Box[] BSObject = new OBJ_Box[10];
 
     // For Orbs Objects
     public OBJ_Orb[] OSObject = new OBJ_Orb[10];
-
+    
     // GamePanel Constructor
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -95,28 +98,23 @@ public class GamePanel extends JPanel implements Runnable {
             oChecker.check();
             player.update();
         }
-
-        // I don't know where to put this, should I put it here or in the UI class.....
-        if (ui.levelsButton.mouseOnButton(mouseHandler)) {
-            levelState = true;
-            mainState = false;
-        }
-
-        if (ui.playButton.mouseOnButton(mouseHandler)) {
-            mainState = false;
-            gameState = true;
-        }
-        if (ui.backButton.mouseOnButton(mouseHandler)) {
-            levelState = false;
-            mainState = true;
-        }
     }
+
+//    public void sleep() {
+//        double time = 0;
+//        while (true) {
+//            time += 0.1;
+//            if (time >= 100000000)
+//                break;
+//        }
+//    }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         if (!gameState) {
             ui.draw(g2);
+            if (levelState) levelManager.onSelectLevel();
         }
         else {
             tileManager.draw(g2);
@@ -134,6 +132,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
             player.draw(g2);
+            scoreBoard.draw(g2);
         }
         g2.dispose(); // to save some memory
     }

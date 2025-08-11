@@ -95,6 +95,9 @@ public class Player extends Entity {
             }
             gamePanel.BSObject[objIndex].collisionOn = false;
         }
+        if (keyHandler.escPressed) {
+            // show mainmenu
+        }
 
         // To check which sprite to show
         spriteCounter++;
