@@ -12,6 +12,7 @@ public class SuperObject {
     public boolean collision = false;
     public boolean collisionOn = false;
     public boolean isMovable = false;
+    public boolean shouldCount = true;
     public int worldX, worldY;
 
     public void draw(Graphics2D g2, GamePanel gamePanel) {

@@ -1,7 +1,6 @@
 package main;
 
 import entity.Player;
-import level.Level;
 import level.LevelManager;
 import object.OBJ_Box;
 import object.OBJ_Orb;
@@ -10,17 +9,20 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.Clock;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable {
     final int originalTileSize = 32; // The tiles and sprites are all 32x32px by default
     final int scale = 1; //  scale it 2x to look bigger; 64px on the screen; Ket iremove na pero you can change the value to look bigger on screen, but you'll be needing to configure the widths and heights of some sprites to not cause any error
     public final int tileSize = originalTileSize * scale; // scale to look bigger on the screen/panel
 
+    int boxCount = 0;
     public  boolean mainState = true;
     public boolean levelState = false;
     public  boolean gameState = false;
     public  boolean pauseState = false;
+    public boolean winState = false;
+
 
     // For the Panel Window
     public final int maxScreenCol = 20;
@@ -51,7 +53,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     // For Orbs Objects
     public OBJ_Orb[] OSObject = new OBJ_Orb[10];
-    
+
+    public ArrayList<OBJ_Box> coveredBoxes = new ArrayList<>(); // This was unecessary i just wanted to use the ArrayList
+
     // GamePanel Constructor
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -60,6 +64,12 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyHandler);
         this.addMouseListener(mouseHandler);
         this.setFocusable(true);
+
+        for (OBJ_Box box: BSObject) {
+            if (box != null) {
+                boxCount++;
+            }
+        }
     }
     public void setObject() {
         assetSetter.setBoxObject();
@@ -95,19 +105,16 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         if (gameState) {
-            oChecker.check();
+            oChecker.checkBoxCovered(player);
             player.update();
+            checkWin();
+
+            if (keyHandler.escPressed) {
+                pauseState = true;
+                gameState = false;
+            }
         }
     }
-
-//    public void sleep() {
-//        double time = 0;
-//        while (true) {
-//            time += 0.1;
-//            if (time >= 100000000)
-//                break;
-//        }
-//    }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -117,6 +124,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (levelState) levelManager.onSelectLevel();
         }
         else {
+            ui.draw(g2);
             tileManager.draw(g2);
 
             // Draw each Orb Objects
@@ -131,9 +139,22 @@ public class GamePanel extends JPanel implements Runnable {
                     box.draw(g2, this);
                 }
             }
+
             player.draw(g2);
             scoreBoard.draw(g2);
         }
         g2.dispose(); // to save some memory
+    }
+
+    public void checkWin() {
+        if (coveredBoxes.size() == boxCount) {
+            winState = true;
+            gameState = false;
+
+            player.worldX = player.defaultX;
+            player.worldY = player.defaultY;
+
+            System.out.println("win");
+        }
     }
 }

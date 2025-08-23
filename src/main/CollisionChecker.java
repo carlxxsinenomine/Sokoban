@@ -12,6 +12,7 @@
 package main;
 
 import entity.Entity;
+import entity.Player;
 import object.OBJ_Box;
 import object.OBJ_Orb;
 
@@ -179,19 +180,21 @@ public class CollisionChecker {
         }
     }
 
-    public void check() {
+    public void checkBoxCovered(Player player) {
         for (OBJ_Box box: gamePanel.BSObject) {
             if (box != null) {
                 for (OBJ_Orb orb: gamePanel.OSObject) {
-                    if (orb != null) {
+                    if (orb != null && box.shouldCount) {
                         int bCol = box.worldX / gamePanel.tileSize;
                         int bRow = box.worldY / gamePanel.tileSize;
                         int oCol = orb.worldX / gamePanel.tileSize;
                         int oRow = orb.worldY / gamePanel.tileSize;
 
-                        if (bCol == oCol && bRow == oRow) {//might try the intersect() later but for now this method works so imma keep it as it is
+                        if (bCol == oCol && bRow == oRow) {
                             box.changeState();
                             box.isMovable = false;
+                            box.shouldCount = false;
+                            gamePanel.coveredBoxes.add(box);
                         }
                     }
                 }

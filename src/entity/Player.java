@@ -13,6 +13,8 @@ public class Player extends Entity {
     GamePanel gamePanel;
     KeyHandler keyHandler;
 
+    public int boxCovered = 0;
+
     public Player(GamePanel gamePanel, KeyHandler keyHandler) {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
@@ -94,9 +96,6 @@ public class Player extends Entity {
                 }
             }
             gamePanel.BSObject[objIndex].collisionOn = false;
-        }
-        if (keyHandler.escPressed) {
-            // show mainmenu
         }
 
         // To check which sprite to show

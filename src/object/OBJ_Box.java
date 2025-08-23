@@ -8,7 +8,6 @@ import java.util.Objects;
 
 public class OBJ_Box extends SuperObject {
     public OBJ_Box() {
-        name = "Box";
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/assets/box.png")));
         } catch (IOException e) {

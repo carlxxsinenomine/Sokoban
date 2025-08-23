@@ -17,6 +17,7 @@ public class ScoreBoard {
     public int score;
     public int movesCount = 0;
     public int bestScore;
+    public String currentLevel;
 
     public Font gemuno, luckiest_guy;
     Player player;
@@ -44,16 +45,18 @@ public class ScoreBoard {
         }
     }
 
-    public void updateMoves() {
+    // Change so that the movements of the box are the ones should be counted.
+    public int updateMoves() {
         if (keyHandler.downPressed || keyHandler.upPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
             if ((player.worldX != prevX) || (player.worldY != prevY)) {
-                movesCount++;
+                return movesCount++;
             }
         }
+        return movesCount;
     }
 
     public void draw(Graphics2D g2) {
-        String  currentLevel = "Level: ";
+        String  levelText = "Level: ";
         String moves = "Moves: ";
         String bestMoves = "Best: ";
 
@@ -62,11 +65,14 @@ public class ScoreBoard {
         xPos = 16;
         yPos = gamePanel.tileSize;
 
-        g2.drawString(currentLevel, xPos, yPos);
-        g2.drawString(moves, xPos, yPos*2);
-        g2.drawString(bestMoves, xPos, yPos*3);
+        g2.drawString(levelText, xPos, yPos);
+        g2.drawString(currentLevel, xPos*7, yPos);
 
-        xPos *= 4;
-//        g2.drawString(); // Finish later
+
+        g2.drawString(moves, xPos, yPos*2);
+        g2.drawString(String.valueOf(updateMoves()), xPos*7, yPos*2);
+
+
+        g2.drawString(bestMoves, xPos, yPos*3);
     }
 }

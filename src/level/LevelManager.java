@@ -2,6 +2,7 @@ package level;
 
 import main.GamePanel;
 import main.MouseHandler;
+import scoreboard.ScoreBoard;
 import tile.TileManager;
 
 public class LevelManager {
@@ -9,6 +10,7 @@ public class LevelManager {
     GamePanel gamePanel;
     MouseHandler mouseHandler;
     TileManager tileManager;
+
     int levelCount = 1;
 
 
@@ -17,6 +19,7 @@ public class LevelManager {
         this.gamePanel = gamePanel;
         this.mouseHandler = mouseHandler;
         this.tileManager = tileManager;
+
         levels = new Level[45]; // Ayusin nalng latur para hinde naka hardcode ang max levels; Read from file.
         loadLevels();
     }
@@ -51,6 +54,8 @@ public class LevelManager {
 //                mouseHandler.mouseX = mouseHandler.mouseY = 0;
                 gamePanel.levelState = false;
                 gamePanel.gameState = true;
+
+                gamePanel.scoreBoard.currentLevel = level.levelString;
 
                 tileManager.loadMap("/maps/" + level.levelString + ".txt");
             }

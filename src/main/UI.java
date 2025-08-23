@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.util.Objects;
 
 public class UI {
@@ -14,7 +15,7 @@ public class UI {
     BufferedImage image, button1, button2, button3;
     GamePanel gamePanel;
     Graphics2D g2;
-    Button playButton = null, levelsButton = null, backButton = null;
+    Button playButton = null, levelsButton = null, backButton = null, backMenuButton = null, exitButton = null, homeButton = null, nextButton = null;
 
     int xPos, yPos, buttonX, playButtonY, levelsButtonY;
     public UI(GamePanel gamePanel) {
@@ -55,6 +56,10 @@ public class UI {
         playButton = new Button("play", button1, 200, 50, buttonX, playButtonY);
         levelsButton = new Button("levels", button2, 200, 50, buttonX, levelsButtonY);
         backButton = new Button("back", button3, 60, 40, 40, 10);//Change later don't hardcode para maging relative nalng posiiton instead na fixed.
+        backMenuButton = new Button("back", button3, 60, 40, 40, 10);
+        exitButton = new Button("exit", button2, 200, 50, buttonX, playButtonY);
+        homeButton = new Button("home", button2, 200, 50, buttonX, playButtonY);
+        nextButton = new Button("next", button3, 200, 50, buttonX, levelsButtonY);
 
         if (gamePanel.mainState) {
             // I don't know where to put this, should I put it here or in the UI class.....
@@ -66,16 +71,32 @@ public class UI {
             if (playButton.mouseOnButton(gamePanel.mouseHandler) && gamePanel.mainState) {
                 gamePanel.mainState = false;
                 gamePanel.gameState = true;
-            }
-            drawMainScreen();
+            } else
+                drawMainScreen();
         }
         else if (gamePanel.levelState) {
 
             if (backButton.mouseOnButton(gamePanel.mouseHandler) && gamePanel.levelState) {
                 gamePanel.levelState = false;
                 gamePanel.mainState = true;
-            }
-            drawLevelsScreen();
+            } else
+                drawLevelsScreen();
+        } else if (gamePanel.pauseState) {
+
+            if (backMenuButton.mouseOnButton(gamePanel.mouseHandler)) {
+                gamePanel.pauseState = false;
+                gamePanel.gameState = true;
+            } else if (exitButton.mouseOnButton(gamePanel.mouseHandler)) {
+                gamePanel.pauseState = false;
+                gamePanel.mainState = true;
+            } else
+                drawMainMenu();
+        } else if (gamePanel.winState) {
+            if (homeButton.mouseOnButton(gamePanel.mouseHandler)) {
+                gamePanel.winState = false;
+                gamePanel.mainState = true;
+            } else
+                drawWinScreen();
         }
     }
 
@@ -142,8 +163,63 @@ public class UI {
         }
     }
 
-    public void screenInfo() {
+    public void drawMainMenu() {
+        drawBackground();
 
+        // Back Button
+        String backText = "back";
+
+        backMenuButton.draw(g2);
+
+        g2.setFont(gemuno.deriveFont(Font.BOLD, 18F));
+
+        g2.setColor(Color.DARK_GRAY);
+
+        xPos = backButton.width/2 + backButton.buttonX / 2;
+        yPos = backButton.height - backButton.buttonY / 2;
+        g2.drawString(backText, xPos, yPos);
+
+        // Main Menu text
+        String mainMenuText = "Main Menu";
+
+        g2.setFont(luckiest_guy.deriveFont(Font.BOLD, 59F));
+        xPos = getXOfText(mainMenuText);
+        yPos = gamePanel.screenHeight / 2 - mainMenuText.length();
+        g2.drawString(mainMenuText, xPos, yPos);
+
+        // Exit Button
+        String exitText = "Exit";
+
+        g2.setFont(gemuno.deriveFont(Font.BOLD, 30F));
+        xPos = getXOfText(exitText);
+        yPos = playButtonY + 32;
+        exitButton.draw(g2);
+        g2.drawString(exitText, xPos, yPos);
+    }
+
+    public void drawWinScreen() {
+        drawBackground();
+        String winText = "Goodjob!";
+
+        g2.setFont(luckiest_guy.deriveFont(Font.BOLD, 90F));
+        xPos = getXOfText(winText);
+        yPos = gamePanel.tileSize * 6;
+        g2.drawString(winText, xPos, yPos);
+
+        // Home Button
+        String homeText = "home";
+        homeButton.draw(g2);
+        g2.setFont(gemuno.deriveFont(Font.BOLD, 40F));
+        xPos = getXOfText(homeText);
+        yPos = playButtonY + gamePanel.tileSize;
+        g2.drawString(homeText, xPos, yPos);
+
+        // Next Button
+        String nextText = "next";
+        nextButton.draw(g2);
+        xPos = getXOfText(nextText);
+        yPos = levelsButtonY + gamePanel.tileSize;
+        g2.drawString(nextText, xPos, yPos);
     }
 
     public void drawBackground() {

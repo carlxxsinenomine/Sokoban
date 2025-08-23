@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Entity {
     public int worldX, worldY;
+    public int defaultX = worldX, defaultY = worldY;
     public int speed;
 
     public BufferedImage l1, l2, l3, l4, r1, r2, r3, r4;
